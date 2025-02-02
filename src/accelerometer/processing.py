@@ -131,4 +131,49 @@ def vis_ma_filter(drift_removed_data):
         plt.tight_layout()  # Prevent overlapping of elements
         plt.show()
 
-def 
+
+# Define bandpass_filter function
+def bandpass_filter(data, fs, lowcut, highcut, numtaps=101):
+    """
+    Bandpass filter using FIR (finite impulse response) filter with firwin.
+
+    Args:
+        data: 1D array of the signal to filter (e.g., accelerometer or EEG data).
+        fs: Sampling frequency in Hz.
+        lowcut: Lower cutoff frequency in Hz.
+        highcut: Upper cutoff frequency in Hz.
+        numtaps: Number of filter taps (higher value = sharper frequency cutoff).
+
+    Returns:
+        Filtered data with only frequencies in the [lowcut, highcut] range.
+    """
+    nyquist = 0.5 * fs  # Nyquist frequency
+    low = lowcut / nyquist  # Normalize lower cutoff
+    high = highcut / nyquist  # Normalize upper cutoff
+
+    # Design the FIR bandpass filter
+    taps = firwin(numtaps, [low, high], pass_zero=False)  # Bandpass filter
+
+    # Apply the filter to the data using filtfilt for zero phase distortion
+    filtered_data = filtfilt(taps, [1.0], data)
+    return filtered_data
+
+def vis_bandpass_filter(filtered_data):
+    """
+    Visualize accelerometer data after applying bandpass filter.
+    """
+    axis_labels = ['X-axis', 'Y-axis', 'Z-axis']
+
+    # Loop through each axis and plot separately
+    for i, label in enumerate(axis_labels):  # Loop over indices and labels
+        plt.figure(figsize=(10, 6))  # Create a new figure for each axis
+        plt.plot(filtered_data[i], label=f"Bandpass-Filtered {label} (1–30 Hz)")
+        plt.title(f"Bandpass Filtering - {label}")
+        plt.xlabel("Time (samples)")
+        plt.ylabel("Amplitude")
+        plt.legend()
+        plt.grid(True)  # Add a grid
+        plt.tight_layout()  # Adjust layout
+        plt.show()
+
+
