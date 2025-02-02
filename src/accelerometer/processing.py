@@ -38,62 +38,6 @@ def load_data(acc_file_path):
             return None
 
 
-def vis_data(accelerometer_data):
-    """
-    Visualize accelerometer data for all axes. 
-    
-    Parameters:
-        accelerometer_data (np.ndarray): Accelerometer data with shape (3, time_samples).
-    """
-    if accelerometer_data is None:
-        print("No data to visualize.")
-        return
-    if len(accelerometer_data.shape) != 2 or accelerometer_data.shape[0] != 3:
-        print("Invalid data shape. Expected (3, time_samples).")
-        return
-    
-    x = np.arange(accelerometer_data.shape[1])
-    axis_labels = ['X-axis', 'Y-axis', 'Z-axis']
-    plt.figure(figsize=(12, 6))
-
-    for i in range(3):
-        plt.plot(x, accelerometer_data[i], label=axis_labels[i])
-
-    plt.title('Accelerometer Data (All Axes)')
-    plt.xlabel('Time (samples)')
-    plt.ylabel('Amplitude')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-
-def vis_x_axis(accelerometer_data):
-    """
-    Visualize accelerometer data for the X-axis. 
-    
-    Parameters:
-        accelerometer_data (np.ndarray): Accelerometer data with shape (3, time_samples).
-    """
-    if accelerometer_data is None:
-        print("No data to visualize.")
-        return
-    if len(accelerometer_data.shape) != 2 or accelerometer_data.shape[0] != 3:
-        print("Invalid data shape. Expected (3, time_samples).")
-        return
-    
-    x = np.arange(accelerometer_data.shape[1])
-    plt.figure(figsize=(12, 6))
-    plt.plot(x, accelerometer_data[0], label='X-axis')
-    plt.title('Accelerometer Data (X-axis)')
-    plt.xlabel('Time (samples)')
-    plt.ylabel('Amplitude')
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    plt.show()
-
-
 # Define moving average filter
 def moving_average_filter(data, window_size=50):
     """
@@ -109,27 +53,6 @@ def moving_average_filter(data, window_size=50):
     smoothed_data = lfilter(b, a, data)
     drift_removed = data - smoothed_data  # Subtract moving average from original data
     return drift_removed
-
-def vis_ma_filter(drift_removed_data):
-    """
-    Visualize accelerometer data after applying moving average filter.
-    """
-    # Plot all axes after drift removal
-    # Plot all axes after drift removal
-    # Labels for the axes
-    axis_labels = ['X-axis', 'Y-axis', 'Z-axis']
-
-    # Loop through each axis and plot them separately
-    for i, label in enumerate(axis_labels):  # Iterate through axes and their labels
-        plt.figure(figsize=(8, 4))  # Adjust figure size
-        plt.plot(drift_removed_data[i], label=f'Drift-Removed {label}', color='blue')
-        plt.title(f"Drift Removal - {label}")
-        plt.xlabel("Time (samples)")
-        plt.ylabel("Amplitude")
-        plt.legend()
-        plt.grid(True)  # Add grid for better visualization
-        plt.tight_layout()  # Prevent overlapping of elements
-        plt.show()
 
 
 # Define bandpass_filter function
@@ -158,22 +81,32 @@ def bandpass_filter(data, fs, lowcut, highcut, numtaps=101):
     filtered_data = filtfilt(taps, [1.0], data)
     return filtered_data
 
-def vis_bandpass_filter(filtered_data):
-    """
-    Visualize accelerometer data after applying bandpass filter.
-    """
-    axis_labels = ['X-axis', 'Y-axis', 'Z-axis']
 
-    # Loop through each axis and plot separately
-    for i, label in enumerate(axis_labels):  # Loop over indices and labels
-        plt.figure(figsize=(10, 6))  # Create a new figure for each axis
-        plt.plot(filtered_data[i], label=f"Bandpass-Filtered {label} (1–30 Hz)")
-        plt.title(f"Bandpass Filtering - {label}")
-        plt.xlabel("Time (samples)")
-        plt.ylabel("Amplitude")
-        plt.legend()
-        plt.grid(True)  # Add a grid
-        plt.tight_layout()  # Adjust layout
-        plt.show()
+# define segments with hamming function
+def segment_with_hamming(signal, window_size, overlap, fs):
+    """
+    Segments the signal into overlapping windows and applies a Hamming window.
+
+    Args:
+        signal: 1D array, input signal (e.g., bandpass-filtered data).
+        window_size: Duration of each window in seconds.
+        overlap: Fraction of overlap between windows (e.g., 0.5 for 50% overlap).
+        fs: Sampling frequency in Hz.
+
+    Returns:
+        A 2D array of segmented and windowed data, where each row is a window.
+    """
+    samples_per_window = int(window_size * fs)  # Convert window size to samples
+    step_size = int(samples_per_window * (1 - overlap))  # Step size for overlapping
+    hamming_window = windows.hamming(samples_per_window)  # Hamming window
+
+    # Create windows
+    num_windows = (len(signal) - samples_per_window) // step_size + 1
+    segments = np.array([
+        signal[i:i + samples_per_window] * hamming_window
+        for i in range(0, len(signal) - samples_per_window + 1, step_size)
+    ])
+
+    return segments
 
 
