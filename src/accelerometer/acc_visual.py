@@ -109,3 +109,20 @@ def vis_bandpass_filter(filtered_data):
         plt.grid(True)  # Add a grid
         plt.tight_layout()  # Adjust layout
         plt.show()
+
+
+
+def vis_segment_hamming(axis_labels, segmented_signals):
+    """
+    Visualize segmented data using a Hamming window.
+    """
+    for i, label in enumerate(axis_labels):
+        plt.figure(figsize=(8, 4))
+        plt.plot(segmented_signals[i][0], label=f"First Window - {label}")
+        plt.title(f"Hamming Window Applied to First Window ({label})")
+        plt.xlabel("Time (samples)")
+        plt.ylabel("Amplitude")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
