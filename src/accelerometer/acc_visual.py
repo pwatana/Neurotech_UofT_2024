@@ -14,6 +14,7 @@ from scipy.signal import windows
 from scipy.signal.windows import hamming
 
 
+# In[1]:
 def vis_data(accelerometer_data):
     """
     Visualize accelerometer data for all axes. 
@@ -44,6 +45,8 @@ def vis_data(accelerometer_data):
     plt.show()
 
 
+
+# In[2]:
 def vis_x_axis(accelerometer_data):
     """
     Visualize accelerometer data for the X-axis. 
@@ -70,6 +73,8 @@ def vis_x_axis(accelerometer_data):
     plt.show()
 
 
+
+# In[3]:
 def vis_ma_filter(drift_removed_data):
     """
     Visualize accelerometer data after applying moving average filter.
@@ -92,6 +97,8 @@ def vis_ma_filter(drift_removed_data):
         plt.show()
 
 
+
+# In[4]:
 def vis_bandpass_filter(filtered_data):
     """
     Visualize accelerometer data after applying bandpass filter.
@@ -112,6 +119,7 @@ def vis_bandpass_filter(filtered_data):
 
 
 
+# In[5]:
 def vis_segment_hamming(axis_labels, segmented_signals):
     """
     Visualize segmented data using a Hamming window.
@@ -126,3 +134,160 @@ def vis_segment_hamming(axis_labels, segmented_signals):
         plt.grid(True)
         plt.tight_layout()
         plt.show()
+
+
+
+
+# In[6]:
+def dominant_freq_vis(dominant_frequencies_all_axes):
+    """
+    Visualize the dominant frequencies detected for each axis.
+    
+    Parameters:
+        dominant_freqs (array): array of dominant frequencies for each axis.
+    """
+    axis_labels = ['X-axis', 'Y-axis', 'Z-axis']
+
+    for i, label in enumerate(axis_labels):
+        plt.figure(figsize=(10, 6))
+        plt.plot(dominant_frequencies_all_axes[i], label=f"Dominant Frequencies ({label})", color="blue")
+        plt.axhline(y=1, color="red", linestyle="--", label="Non-Tremor Baseline (1 Hz)")
+        plt.axhline(y=3, color="green", linestyle="--", label="Lower Bound (3 Hz)")
+        plt.axhline(y=8, color="purple", linestyle="--", label="Upper Bound (8 Hz)")
+        plt.title(f"Dominant Frequencies Detected (3–8 Hz) - {label}")
+        plt.xlabel("Window Index")
+        plt.ylabel("Frequency (Hz)")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+# In[7]:
+
+def time_frequency_vis(mapped_time_frequency_representation):
+    """
+    Visualize the time-frequency representation of the accelerometer data.
+    
+    Parameters:
+        mapped_time_frequency_representation (array): Time-frequency representation of the data.
+    """
+    axis_labels = ["X-axis", "Y-axis", "Z-axis"]
+    for i, label in enumerate(axis_labels):
+        plt.figure(figsize=(10, 6))
+        plt.plot(mapped_time_frequency_representation[i], label=f"TFR - {label}", color="blue")
+        plt.title(f"Time-Frequency Representation ({label})")
+        plt.xlabel("Time Index")
+        plt.ylabel("Frequency (Hz)")
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+
+
+# In[8]:
+
+def combined_axes_vis(combined_tfr_signal):
+    """
+    Visualize the combined time-frequency representation of all axes.
+    
+    Parameters:
+        combined_tfr_signal (array): Combined time-frequency representation of all axes.
+    """
+    # Visualization: Combined Time-Frequency Representation
+    plt.figure(figsize=(10, 6))
+    plt.plot(combined_tfr_signal, label="Combined TFR Signal", color="blue")
+    plt.axhline(y=0.5, color="red", linestyle="--", label="Detection Threshold (Normalized)")
+    plt.title("Combined Time-Frequency Representation Across Axes")
+    plt.xlabel("Time Index")
+    plt.ylabel("Normalized Combined Value")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+# In[9]:
+def denormalized_tfr_vis(denormalized_tfr_signal):
+    """
+    Visualize the denormalized time-frequency representation.
+    
+    Parameters:
+        denormalized_tfr_signal (array): Denormalized time-frequency representation.
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(denormalized_tfr_signal, label="Denormalized TFR Signal (Hz)", color="blue")
+    plt.axhline(y=3.5, color="red", linestyle="--", label="Tremor Threshold (3.5 Hz)")
+    plt.title("Denormalized Time-Frequency Representation (TFR)")
+    plt.xlabel("Time Index")
+    plt.ylabel("Frequency (Hz)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+# In[10]:
+def threshold_vis(tremor_labels):
+    """
+    Visualize the tremor labels.
+    
+    Parameters:
+        tremor_labels (array): Array of tremor labels.
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(tremor_labels, label="Tremor Detection", color="blue")
+    plt.axhline(y=0.5, color="red", linestyle="--", label="Tremor Threshold")
+    plt.title("Tremor Detection (Binary Labels)")
+    plt.xlabel("Time Index")
+    plt.ylabel("Tremor Presence (1 = Yes, 0 = No)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+# In[11]:
+
+def rectangular_pulse_vis(pulse_signal):
+    """
+    Visualize the rectangular pulse signal.
+    
+    Parameters:
+        pulse_signal (array): Rectangular pulse signal.
+    """
+    plt.figure(figsize=(10, 6))
+    plt.plot(pulse_signal, label="Tremor Rectangular Pulse", color="blue", drawstyle="steps-post")
+    plt.title("Rectangular Pulse Representation of Tremor Events")
+    plt.xlabel("Time Index")
+    plt.ylabel("Tremor Presence (1 = Yes, 0 = No)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+# In[12]:
+
+def tremor_edge_vis(tremor_onsets, time_index, rectangular_pulse):
+    """
+    Visualize the tremor onsets and offsets.
+    
+    Parameters:
+        tremor_onsets (array): Array of tremor onsets and offsets.
+    """
+    plt.figure(figsize=(12, 6))
+    plt.plot(time_index, rectangular_pulse, label="Tremor Rectangular Pulse", color="blue")
+
+    # Mark tremor onset times
+    plt.scatter(tremor_onsets, np.ones_like(tremor_onsets), color='red', label="Tremor Onset", marker='o', s=50)
+
+    plt.title("Detected Tremor Onset and Duration")
+    plt.xlabel("Time (seconds)")
+    plt.ylabel("Tremor Presence (1 = Yes, 0 = No)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    plt.show()
+
+
+# In[13]:
