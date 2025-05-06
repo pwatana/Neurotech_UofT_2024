@@ -3,6 +3,7 @@
 import mne
 import pickle
 import numpy as np
+import pandas as pd
 
 from spectrum import aryule, arma2psd
 from scipy import signal

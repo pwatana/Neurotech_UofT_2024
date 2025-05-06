@@ -1,17 +1,4 @@
-import mne
-import pickle
-import numpy as np
-
-from spectrum import aryule, arma2psd
-from scipy import signal
-from scipy.signal import find_peaks
-from scipy.signal.windows import hamming
-from scipy.signal import find_peaks, firwin
-from scipy.signal import lfilter
 import matplotlib.pyplot as plt
-from scipy.signal import butter, filtfilt
-from scipy.signal import windows
-from scipy.signal.windows import hamming
 
 
 # In[1]:
