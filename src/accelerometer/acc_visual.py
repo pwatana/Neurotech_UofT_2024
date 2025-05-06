@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
-
+import numpy as np
+import pandas as pd
+import seaborn as sns
 
 # In[1]:
 def vis_data(accelerometer_data):
